@@ -1,3 +1,47 @@
+# Run TPU on CFU Playground
+
+Use Nexys A7-100T, Vivado 2023.2 or 2024.1.
+
+## 1. Clone the CFU-Playground Repository from the github
+
+```sh
+git clone https://github.com/hsin6344/CFU-playground
+```
+
+## 2. Run the setup script
+
+```sh
+cd CFU-Playground
+./scripts/setup
+```
+
+## 3. Compile and Run
+
+```sh
+cd {CFU-Playground}/proj/TPU_project
+make prog EXTRA_LITEX_ARGS="--cpu-variant=perf+cfu"
+make load
+```
+
+## 4. Run the model
+
+```
+CFU Playground
+==============
+>1: TfLM Models menu
+ 2: Functional CFU Tests
+ 3: Project menu
+ 4: Performance Counter Tests
+ 5: TFLite Unit Tests
+ 6: Benchmarks
+ 7: Util Tests
+ 8: Embench IoT
+main> 1
+```
+
+Choose the model you want to run.
+
+
 # CFU Playground
 
 Want a faster ML processor?   Do it yourself!
