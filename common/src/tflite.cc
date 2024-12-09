@@ -83,6 +83,9 @@ constexpr int kTensorArenaSize = const_max<int>(
 #ifdef INCLUDE_MODEL_PDTI8
     81 * 1024,
 #endif
+#ifdef INCLUDE_MODEL_DS_CNN_STREAM_FE
+    3000 * 1024,
+#endif
 #ifdef INCLUDE_MODEL_MICRO_SPEECH
     7 * 1024,
 #endif
@@ -94,6 +97,9 @@ constexpr int kTensorArenaSize = const_max<int>(
 #endif
 #ifdef INCLUDE_MODEL_HPS
     256 * 1024,
+#endif
+#ifdef INCLUDE_MODEL_MOBILE_VIT_XXS
+    16384 * 1024,
 #endif
 #ifdef INCLUDE_MODEL_MLCOMMONS_TINY_V01_ANOMD
     3 * 1024,

@@ -23,12 +23,6 @@
 #include "flatbuffers/base.h"
 #include "flatbuffers/stl_emulation.h"
 
-// For TFLM we always want to use FLATBUFFERS_PREFER_PRINTF=1. See
-// http://b/211811553 for more context.
-#ifndef FLATBUFFERS_PREFER_PRINTF
-#define FLATBUFFERS_PREFER_PRINTF 1
-#endif
-
 #ifndef FLATBUFFERS_PREFER_PRINTF
 #  include <iomanip>
 #  include <sstream>
@@ -454,9 +448,6 @@ std::string StripPath(const std::string &filepath);
 // Strip the last component of the path + separator.
 std::string StripFileName(const std::string &filepath);
 
-std::string StripPrefix(const std::string &filepath,
-                        const std::string &prefix_to_remove);
-
 // Concatenates a path with a filename, regardless of whether the path
 // ends in a separator or not.
 std::string ConCatPathFileName(const std::string &path,
@@ -693,32 +684,6 @@ bool ReadEnvironmentVariable(const char *var_name,
 
 // MSVC specific: Send all assert reports to STDOUT to prevent CI hangs.
 void SetupDefaultCRTReportMode();
-
-enum class Case {
-  kUnknown = 0,
-  // TheQuickBrownFox
-  kUpperCamel = 1,
-  // theQuickBrownFox
-  kLowerCamel = 2,
-  // the_quick_brown_fox
-  kSnake = 3,
-  // THE_QUICK_BROWN_FOX
-  kScreamingSnake = 4,
-  // THEQUICKBROWNFOX
-  kAllUpper = 5,
-  // thequickbrownfox
-  kAllLower = 6,
-  // the-quick-brown-fox
-  kDasher = 7,
-  // THEQuiCKBr_ownFox (or whatever you want, we won't change it)
-  kKeep = 8,
-  // the_quick_brown_fox123 (as opposed to the_quick_brown_fox_123)
-  kSnake2 = 9,
-};
-
-// Convert the `input` string of case `input_case` to the specified `output_case`.
-std::string ConvertCase(const std::string &input, Case output_case,
-                    Case input_case = Case::kSnake);
 
 }  // namespace flatbuffers
 

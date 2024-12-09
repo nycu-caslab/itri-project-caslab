@@ -127,7 +127,10 @@ TfLiteRegistration Register_STRIDED_SLICE();
 TfLiteRegistration Register_UNPACK();
 TfLiteRegistration Register_L2_NORMALIZATION();
 TfLiteRegistration Register_TANH();
-
+//TfLiteRegistration* Register_ETHOSU();
+TfLiteRegistration* Register_AUDIO_SPECTROGRAM();
+TfLiteRegistration* Register_MFCC();
+TfLiteRegistration Register_SUM();
 }  // namespace micro
 }  // namespace ops
 }  // namespace tflite

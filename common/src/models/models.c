@@ -28,6 +28,8 @@
 #include "models/mlcommons_tiny_v01/vww/vww.h"
 #include "models/mnv2/mnv2.h"
 #include "models/pdti8/pdti8.h"
+#include "models/mobileViT_xxs/mobileViT.h"
+#include "models/ds_cnn_stream_fe/ds_cnn.h"
 
 inline void no_menu() {}
 
@@ -43,11 +45,17 @@ static struct Menu MENU = {
 #if defined(INCLUDE_MODEL_PDTI8) || defined(INCLUDE_ALL_TFLM_EXAMPLES)
         MENU_ITEM(AUTO_INC_CHAR, "Person Detection int8 model", pdti8_menu),
 #endif
+#if defined(INCLUDE_MODEL_DS_CNN_STREAM_FE)
+        MENU_ITEM(AUTO_INC_CHAR, "Ds cnn stream fe", ds_cnn_stream_fe_menu),
+#endif
 #if defined(INCLUDE_MODEL_MICRO_SPEECH) || defined(INCLUDE_ALL_TFLM_EXAMPLES)
         MENU_ITEM(AUTO_INC_CHAR, "Micro Speech", micro_speech_menu),
 #endif
 #if defined(INCLUDE_MODEL_MAGIC_WAND) || defined(INCLUDE_ALL_TFLM_EXAMPLES)
         MENU_ITEM(AUTO_INC_CHAR, "Magic Wand", magic_wand_menu),
+#endif
+#if defined(INCLUDE_MODEL_MOBILE_VIT_XXS)
+        MENU_ITEM(AUTO_INC_CHAR, "MobileViT xxs", mobileViT_xxs_menu),
 #endif
 #if defined(INCLUDE_MODEL_MNV2)
         MENU_ITEM(AUTO_INC_CHAR, "Mobile Net v2 models", mnv2_menu),

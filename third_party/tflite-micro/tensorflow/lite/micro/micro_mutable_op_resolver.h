@@ -98,7 +98,6 @@ class MicroMutableOpResolver : public MicroOpResolver {
       MicroPrintf("is not supported (Op: %s).", name);
       return kTfLiteError;
     }
-
     TfLiteRegistration* new_registration = &registrations_[registrations_len_];
     registrations_len_ += 1;
 
@@ -540,9 +539,11 @@ class MicroMutableOpResolver : public MicroOpResolver {
     return AddBuiltin(BuiltinOperator_SUB, tflite::Register_SUB(), ParseSub);
   }
 
+/*
   TfLiteStatus AddSum() {
     return AddBuiltin(BuiltinOperator_SUM, Register_SUM(), ParseReducer);
   }
+*/
 
   TfLiteStatus AddSvdf(
       const TfLiteRegistration& registration = Register_SVDF()) {
@@ -588,6 +589,24 @@ class MicroMutableOpResolver : public MicroOpResolver {
     return AddBuiltin(BuiltinOperator_ZEROS_LIKE, Register_ZEROS_LIKE(),
                       ParseZerosLike);
   }
+
+  /********************** new_add *********************/
+  
+  TfLiteStatus AddAudio_Spectrogram() {
+    return AddCustom("AudioSpectrogram",
+                     tflite::ops::micro::Register_AUDIO_SPECTROGRAM());
+  }
+
+  TfLiteStatus AddMFCC() {
+    return AddCustom("Mfcc",
+                     tflite::ops::micro::Register_MFCC());
+  }
+  
+  TfLiteStatus AddSum() {
+    return AddBuiltin(BuiltinOperator_SUM, 
+                        Register_SUM(), ParseReducer);
+  }
+  /********************** new_add *********************/
 
   unsigned int GetRegistrationLength() { return registrations_len_; }
 

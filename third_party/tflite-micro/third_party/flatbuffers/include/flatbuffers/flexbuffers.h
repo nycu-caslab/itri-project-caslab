@@ -156,7 +156,6 @@ inline uint64_t ReadUInt64(const uint8_t *data, uint8_t byte_width) {
   // TODO: GCC apparently replaces memcpy by a rep movsb, but only if count is a
   // constant, which here it isn't. Test if memcpy is still faster than
   // the conditionals in ReadSizedScalar. Can also use inline asm.
-
   // clang-format off
   #if defined(_MSC_VER) && defined(_M_X64) && !defined(_M_ARM64EC)
   // This is 64-bit Windows only, __movsb does not work on 32-bit Windows.
@@ -494,24 +493,9 @@ class Reference {
           return static_cast<double>(ReadUInt64(Indirect(), byte_width_));
         case FBT_NULL: return 0.0;
         case FBT_STRING: {
-#if 1
-#if !defined( _MSC_VER)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wnull-dereference"
-#endif
-          // See b/173239141 for additional context. Patched via
-          // micro/tools/make/flexbuffers_download.sh
-          // Introduce a segfault for an unsupported code path for TFLM.
-          return *(static_cast<double*>(nullptr));
-#if !defined( _MSC_VER)
-#pragma GCC diagnostic pop
-#endif
-#else
-          // This is the original code
           double d;
           flatbuffers::StringToNumber(AsString().c_str(), &d);
           return d;
-#endif
         }
         case FBT_VECTOR: return static_cast<double>(AsVector().size());
         case FBT_BOOL:
@@ -594,7 +578,7 @@ class Reference {
           // unquoted if it looks like an "identifier":
           const char *p = keys[i].AsKey();
           if (!flatbuffers::is_alpha(*p) && *p != '_') {
-            kq = true;
+              kq = true;
           } else {
             while (*++p) {
               if (!flatbuffers::is_alnum(*p) && *p != '_') {
@@ -1438,12 +1422,10 @@ class Builder FLATBUFFERS_FINAL_CLASS {
 
   template<typename T> static Type GetScalarType() {
     static_assert(flatbuffers::is_scalar<T>::value, "Unrelated types");
-    return flatbuffers::is_floating_point<T>::value
-               ? FBT_FLOAT
-               : flatbuffers::is_same<T, bool>::value
-                     ? FBT_BOOL
-                     : (flatbuffers::is_unsigned<T>::value ? FBT_UINT
-                                                           : FBT_INT);
+    return flatbuffers::is_floating_point<T>::value ? FBT_FLOAT
+           : flatbuffers::is_same<T, bool>::value
+               ? FBT_BOOL
+               : (flatbuffers::is_unsigned<T>::value ? FBT_UINT : FBT_INT);
   }
 
  public:
@@ -1755,9 +1737,9 @@ class Verifier FLATBUFFERS_FINAL_CLASS {
     if (!Check(depth_ <= max_depth_ && num_vectors_ <= max_vectors_))
       return false;
     auto size_byte_width = r.byte_width_;
-    if (!VerifyBeforePointer(p, size_byte_width)) return false;
-    FLEX_CHECK_VERIFIED(p - size_byte_width,
+    FLEX_CHECK_VERIFIED(p,
                         PackedType(Builder::WidthB(size_byte_width), r.type_));
+    if (!VerifyBeforePointer(p, size_byte_width)) return false;
     auto sized = Sized(p, size_byte_width);
     auto num_elems = sized.size();
     auto elem_byte_width = r.type_ == FBT_STRING || r.type_ == FBT_BLOB
@@ -1893,6 +1875,18 @@ inline bool VerifyBuffer(const uint8_t *buf, size_t buf_len,
   Verifier verifier(buf, buf_len, reuse_tracker);
   return verifier.VerifyBuffer();
 }
+
+#ifdef FLATBUFFERS_H_
+// This is a verifier utility function that works together with the
+// FlatBuffers verifier, which should only be present if flatbuffer.h
+// has been included (which it typically is in generated code).
+inline bool VerifyNestedFlexBuffer(const flatbuffers::Vector<uint8_t> *nv,
+                                   flatbuffers::Verifier &verifier) {
+  if (!nv) return true;
+  return verifier.Check(flexbuffers::VerifyBuffer(
+      nv->data(), nv->size(), verifier.GetFlexReuseTracker()));
+}
+#endif
 
 }  // namespace flexbuffers
 
