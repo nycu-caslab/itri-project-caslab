@@ -5,7 +5,7 @@ Use Nexys A7-100T, Vivado 2023.2 or 2024.1.
 ## 1. Clone the CFU-Playground Repository from the github
 
 ```sh
-git clone https://github.com/hsin6344/CFU-playground
+git clone https://github.com/nycu-caslab/itri-project-caslab
 ```
 
 ## 2. Run the setup script
